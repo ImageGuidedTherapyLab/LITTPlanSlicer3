@@ -1,0 +1,170 @@
+/*=auto=========================================================================
+
+  Portions (c) Copyright 2007 Brigham and Women's Hospital (BWH) All Rights Reserved.
+
+  See Doc/copyright/copyright.txt
+  or http://www.slicer.org/copyright/copyright.txt for details.
+
+  Program:   3D Slicer
+  Module:    $RCSfile: $
+  Date:      $Date: $
+  Version:   $Revision: $
+
+=========================================================================auto=*/
+// .NAME vtkLaserApplicatorFiducialCalibrationAlgo - ...
+// .SECTION Description
+// vtkLaserApplicatorFiducialCalibrationAlgo ... TODO: to be completed
+
+#ifndef __vtkLaserApplicatorFiducialCalibrationAlgo_h
+#define __vtkLaserApplicatorFiducialCalibrationAlgo_h
+
+#include "vtkObject.h"
+#include "vtkLITTPlanWin32Header.h"
+
+class vtkMatrix4x4;
+class vtkImageData;
+class vtkLITTPlanTargetDescriptor;
+struct NeedleDescriptorStruct;
+class vtkPoints;
+
+#include <vector>
+#include "itkPoint.h"
+
+const unsigned int CALIB_MARKER_COUNT=2;
+
+//BTX
+struct TRLaserAblationCalibrationFromImageInput
+{
+  double MarkerInitialPositions[CALIB_MARKER_COUNT][3]; // in RAS coordinates
+  double MarkerSegmentationThreshold[CALIB_MARKER_COUNT];
+  double MarkerDimensionsMm[3];
+  double MarkerRadiusMm;
+  double RobotInitialAngle;
+  vtkMatrix4x4 *VolumeIJKToRASMatrix;
+  vtkImageData *VolumeImageData;
+  std::string FoR; // frame of reference
+};
+
+struct TRLaserAblationCalibrationData
+{
+  bool CalibrationValid;
+  double AxesDistance;
+  double RobotRegistrationAngleDegrees; // registration angle in degrees
+  double AxesAngleDegrees; // angle alpha between two axes in degrees
+  double I1[3];
+  double I2[3]; 
+  double v1[3];
+  double v2[3];
+  std::string FoR; // frame of reference UID
+};
+
+struct TRLaserAblationTargetingParams
+{ 
+  std::string GetReachableString() const
+  { 
+    if (this->IsOutsideReach) 
+      return "No";
+    else
+      return "Yes";
+  }
+  
+  //////////
+  bool TargetingParametersValid;
+  double AxisRotation;    ///< Calculated value: Axis rotation in degree
+  double NeedleAngle;     ///< Calculated value: Needle angle in degree
+  double DepthCM;         ///< Calculated value: Insertion deepth in cm
+  bool IsOutsideReach;    ///< Calculated value: Can be reached or not with the current needle length and valid angle range
+  double HingePosition[3]; /// hinge position (RAS)
+  
+};
+
+//ETX
+
+class VTK_PROSTATENAV_EXPORT vtkLaserApplicatorFiducialCalibrationAlgo :
+  public vtkObject
+{
+public:
+
+  static vtkLaserApplicatorFiducialCalibrationAlgo *New();
+  vtkTypeRevisionMacro(vtkLaserApplicatorFiducialCalibrationAlgo,vtkObject);
+  void PrintSelf(ostream& os, vtkIndent indent);
+
+  //BTX
+  typedef itk::Point<double, 3> PointType;
+
+  // Description
+  // ... TODO: to be completed
+  bool CalibrateFromImage(const TRLaserAblationCalibrationFromImageInput &input);  
+  //ETX
+
+  static bool FindTargetingParams(vtkLITTPlanTargetDescriptor *target, const TRLaserAblationCalibrationData &calibrationData, NeedleDescriptorStruct *needle, TRLaserAblationTargetingParams *targetingParams);
+
+  // Description
+  // Return true if the i-th marker position is successfully detected
+  bool GetMarkerFound(int i);
+
+  // Description
+  // Return the i-th marker position (in RAS coordinates)
+  double* GetMarkerPositions(int i);
+
+  vtkImageData *GetCalibMarkerPreProcOutput(int i);
+  vtkMatrix4x4* GetCalibMarkerPreProcOutputIJKToRAS();
+  void GetAxisCenterpoints(vtkPoints *points, int i);
+
+  const TRLaserAblationCalibrationData& GetCalibrationData() { return this->CalibrationData; }
+
+  // Description
+  // Enable automatic adjustment of the clicked marker centerpoint position based on the
+  // image contents. If disabled, then the manually defined marker positions considered to be
+  // the centerpoints.
+  // By default it is enabled.
+  void SetEnableMarkerCenterpointAdjustment(bool enable);
+
+protected:
+
+  static bool RotatePoint(double H_before[3], double rotation_rad, double alpha_rad, double mainaxis[3], double I[3], /*out*/double H_after[3]);
+
+  //BTX
+  void SegmentAxis(const double initPos1[3], const double initPos2[3], vtkMatrix4x4 *volumeIJKToRASMatrix, vtkImageData* calibVol,
+    double thresh1, double thresh2, const double fidDimsMm[3], double radius, double initialAngle, 
+    double P1[3], double v1[3], double finalPos1[3], double finalPos2[3], bool &found1, bool &found2, vtkImageData* img1, vtkImageData* img2, std::vector<PointType> *CoordinatesVectorAxis);
+  // thresh: 0..100, binary threshold value (0 corresponds to min voxel value; 100 corresponds to max voxel value in the image)
+  bool SegmentCircle(double markerCenterGuessRas[3],const double normalRas[3],  double thresh, const double fidDimsMm[3], double radius, vtkMatrix4x4 *ijkToRAS, vtkImageData *calibVol, std::vector<PointType> &CoordinatesVector, vtkImageData *preprocOutput=NULL);
+  //ETX
+  bool CalculateCircleCenter(vtkImageData *inData, unsigned int *tempStorage, int tempStorageSize, double nThersholdVal, double nRadius, double &gx, double &gy, int nVotedNeeded, bool lDebug);  
+  bool CalculateCircleCenterMean(vtkImageData *inData, double nRadius, double threshold, double &gx, double &gy);  
+  //BTX
+  void RemoveOutliners(double P_[3], double v_[3], const double def1[3], const double def2[3], std::vector<PointType> &CoordinatesVector);
+  //ETX
+  bool FindProbe(const double P1[3], const double P2[3], double v1[3], double v2[3], 
+    double I1[3], double I2[3], double &axesAngleDegrees, double &axesDistance);
+  //BTX
+  void Linefinder(double P_[3], double v_[3], std::vector<itk::Point<double,3> > CoordVector);
+  //ETX
+
+  void CropWithCylinder(vtkImageData* output, vtkImageData* input, const double linePoint_RAS[3],const double normal_RAS[3], vtkMatrix4x4 *ijkToRAS, double radiusMm);
+
+  bool DoubleEqual(double val1, double val2);
+
+  vtkLaserApplicatorFiducialCalibrationAlgo();
+  virtual ~vtkLaserApplicatorFiducialCalibrationAlgo();
+
+  //BTX
+  std::vector<PointType> CoordinatesVectorAxis1;
+  std::vector<PointType> CoordinatesVectorAxis2;
+  std::vector<vtkImageData*> CalibMarkerPreProcOutput;
+  vtkMatrix4x4* CalibMarkerPreProcOutputIJKToRAS;
+  bool MarkerFound[CALIB_MARKER_COUNT];
+  double MarkerPositions[CALIB_MARKER_COUNT][3]; // in RAS coordinates
+  //ETX
+
+  TRLaserAblationCalibrationData CalibrationData;
+
+  bool EnableMarkerCenterpointAdjustment;
+
+private:
+  vtkLaserApplicatorFiducialCalibrationAlgo(const vtkLaserApplicatorFiducialCalibrationAlgo&);  // Not implemented.
+  void operator=(const vtkLaserApplicatorFiducialCalibrationAlgo&);  // Not implemented.
+};
+
+#endif
