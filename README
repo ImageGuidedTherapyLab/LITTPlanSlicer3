@@ -1,4 +1,12 @@
-slicer planning module 
- 
-works with Slicer3
+slicer planning module, works with Slicer3
 
+Follow slicer build Instructions to build you own local copy.
+
+    http://www.slicer.org/slicerWiki/index.php/Slicer3:Build_Instructions
+
+cd LITTPlan; make
+
+in cmake:
+ 
+    Slicer3_DIR needs to be set to the Slicer3-build directory created 
+during the slicer build
