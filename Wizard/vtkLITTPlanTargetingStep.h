@@ -107,6 +107,7 @@ protected:
   vtkKWCheckButton *ShowRobotButton;  
   vtkKWCheckButton *AddTargetsOnClickButton;
   vtkKWMenuButtonWithLabel *NeedleTypeMenuList;  
+  vtkKWMenuButtonWithLabel *TissueTypeMenuList;
   vtkMRMLFiducialListNode *TargetPlanListNode;
 
   // TargetList frame
@@ -127,6 +128,7 @@ protected:
   vtkKWSpinBoxWithLabel *ThermalConductivityValueBox;
   vtkKWSpinBoxWithLabel *OpticalAbsorptionValueBox;
   vtkKWSpinBoxWithLabel *OpticalScatteringValueBox;
+  vtkKWSpinBoxWithLabel *Density;
 
   int ShowTargetOrientation;
 

@@ -1077,5 +1077,5 @@ const char* vtkMRMLLITTPlanManagerNode::GetLITTPlanModuleVersion()
 
 int vtkMRMLLITTPlanManagerNode::GetLITTPlanWorkingCopyRevision()
 {
-  return LITTPlan_REVISION;
+  return 0;
 }

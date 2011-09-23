@@ -972,7 +972,7 @@ void vtkLITTPlanGUI::BuildGUIForConfigurationFrame ()
   this->LITTPlanManagerSelectorWidget = vtkSlicerNodeSelectorWidget::New() ;
   this->LITTPlanManagerSelectorWidget->SetParent(configurationFrame->GetFrame());
   this->LITTPlanManagerSelectorWidget->Create();
-  this->LITTPlanManagerSelectorWidget->SetNodeClass("vtkMRMLLITTPlanManagerNode", NULL, NULL, "LITTPlan exam");
+  this->LITTPlanManagerSelectorWidget->SetNodeClass("vtkMRMLLITTPlanManagerNode", NULL, NULL, "LITTPlan exam MDA");
   this->LITTPlanManagerSelectorWidget->SetMRMLScene(this->GetMRMLScene());
   this->LITTPlanManagerSelectorWidget->SetBorderWidth(2);
   this->LITTPlanManagerSelectorWidget->GetWidget()->GetWidget()->IndicatorVisibilityOff();

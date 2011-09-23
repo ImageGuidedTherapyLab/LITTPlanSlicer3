@@ -111,6 +111,7 @@ vtkLITTPlanTargetingStep::vtkLITTPlanTargetingStep()
   this->TargetPlanningFrame=NULL;  
   this->AddTargetsOnClickButton=NULL;
   this->NeedleTypeMenuList=NULL; 
+  this->TissueTypeMenuList=NULL;
 
   // TargetList frame
   this->TargetListFrame=NULL;
@@ -140,6 +141,7 @@ vtkLITTPlanTargetingStep::vtkLITTPlanTargetingStep()
   this->ThermalConductivityValueBox=NULL;
   this->OpticalAbsorptionValueBox=NULL;
   this->OpticalScatteringValueBox=NULL;
+  this->Density=NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -158,6 +160,7 @@ vtkLITTPlanTargetingStep::~vtkLITTPlanTargetingStep()
   DELETE_IF_NULL_WITH_SETPARENT_NULL(ShowRobotButton);
   DELETE_IF_NULL_WITH_SETPARENT_NULL(AddTargetsOnClickButton);
   DELETE_IF_NULL_WITH_SETPARENT_NULL(NeedleTypeMenuList); 
+  DELETE_IF_NULL_WITH_SETPARENT_NULL(TissueTypeMenuList);
 
   // TargetList frame
   DELETE_IF_NULL_WITH_SETPARENT_NULL(TargetListFrame);
@@ -177,6 +180,7 @@ vtkLITTPlanTargetingStep::~vtkLITTPlanTargetingStep()
   DELETE_IF_NULL_WITH_SETPARENT_NULL(ThermalConductivityValueBox);
   DELETE_IF_NULL_WITH_SETPARENT_NULL(OpticalAbsorptionValueBox);
   DELETE_IF_NULL_WITH_SETPARENT_NULL(OpticalScatteringValueBox);
+  DELETE_IF_NULL_WITH_SETPARENT_NULL(Density);
 }
 
 //----------------------------------------------------------------------------
@@ -298,6 +302,17 @@ void vtkLITTPlanTargetingStep::ShowTargetPlanningFrame()
     this->NeedleTypeMenuList->SetLabelText("Needle type");
     this->NeedleTypeMenuList->SetBalloonHelpString("Select the needle type");
     }
+  if (!this->TissueTypeMenuList)
+    {
+      this->TissueTypeMenuList = vtkKWMenuButtonWithLabel::New();
+    }
+  if (!this->TissueTypeMenuList->IsCreated())
+    {
+    this->TissueTypeMenuList->SetParent(this->TargetPlanningFrame);
+    this->TissueTypeMenuList->Create();
+    this->TissueTypeMenuList->SetLabelText("Tissue type");
+    this->TissueTypeMenuList->SetBalloonHelpString("Select the tissue type");
+    }
     
   if (!this->PerfusionValueBox)
     {
@@ -311,7 +326,7 @@ void vtkLITTPlanTargetingStep::ShowTargetPlanningFrame()
     this->PerfusionValueBox->GetWidget()->SetRange(0,100);
     this->PerfusionValueBox->GetWidget()->SetIncrement(0.5);
     this->PerfusionValueBox->GetWidget()->SetValue(6.0);
-    this->PerfusionValueBox->SetLabelText("Perfusion Value [kg/s/m^3]");
+    this->PerfusionValueBox->SetLabelText("Perfusion Value [kg/(s.m3)]");
     }
 
   if (!this->ThermalConductivityValueBox)
@@ -326,7 +341,7 @@ void vtkLITTPlanTargetingStep::ShowTargetPlanningFrame()
     this->ThermalConductivityValueBox->GetWidget()->SetRange(0,10);
     this->ThermalConductivityValueBox->GetWidget()->SetIncrement(0.5);
     this->ThermalConductivityValueBox->GetWidget()->SetValue(0.5);
-    this->ThermalConductivityValueBox->SetLabelText("Thermal Conductivity Value [W/K/m]");
+    this->ThermalConductivityValueBox->SetLabelText("Thermal Conductivity Value [W/(K.m)]");
     }
 
   if (!this->OpticalAbsorptionValueBox)
@@ -356,7 +371,21 @@ void vtkLITTPlanTargetingStep::ShowTargetPlanningFrame()
     this->OpticalScatteringValueBox->GetWidget()->SetRange(0,10000);
     this->OpticalScatteringValueBox->GetWidget()->SetIncrement(0.5);
     this->OpticalScatteringValueBox->GetWidget()->SetValue(1000);
-    this->OpticalScatteringValueBox->SetLabelText("Optical Scattering [1/m]");
+    this->OpticalScatteringValueBox->SetLabelText("Optical Scattering? [1/m]");
+    }
+  if (!this->Density)
+      {
+      this->Density = vtkKWSpinBoxWithLabel::New();
+      }
+  if (!this->Density->IsCreated())
+   {
+    this->Density->SetParent(this->TargetPlanningFrame);
+    this->Density->Create();
+    this->Density->GetWidget()->SetWidth(11);
+    this->Density->GetWidget()->SetRange(0,10000);
+    this->Density->GetWidget()->SetIncrement(0.5);
+    this->Density->GetWidget()->SetValue(1000);
+    this->Density->SetLabelText("Density [kg/m3]");
     }
 
   this->Script("grid %s -row 0 -column 0 -padx 2 -pady 2 -sticky ew", this->LoadTargetingVolumeButton->GetWidgetName());
@@ -364,12 +393,14 @@ void vtkLITTPlanTargetingStep::ShowTargetPlanningFrame()
   this->Script("grid %s -row 0 -column 2 -padx 2 -pady 2 -sticky e", this->ShowWorkspaceButton->GetWidgetName());
   this->Script("grid %s -row 1 -column 0 -columnspan 3 -padx 2 -pady 2 -sticky ew", this->VolumeSelectorWidget->GetWidgetName());
   this->Script("grid %s -row 2 -column 0 -columnspan 3 -padx 2 -pady 2 -sticky w", this->AddTargetsOnClickButton->GetWidgetName());
-  this->Script("grid %s -row 3 -column 0 -columnspan 3 -padx 2 -pady 2 -sticky ew", this->NeedleTypeMenuList->GetWidgetName());
+  this->Script("grid %s -row 3 -column 0 -columnspan 3 -padx 2 -pady 2 -sticky ew", this->TissueTypeMenuList->GetWidgetName());
+  this->Script("grid %s -row 4 -column 0 -columnspan 3 -padx 2 -pady 2 -sticky ew", this->NeedleTypeMenuList->GetWidgetName());
 
-  this->Script("grid %s -row 4 -column 0 -columnspan 3 -padx 2 -pady 2 -sticky ew", this->PerfusionValueBox->GetWidgetName());
-  this->Script("grid %s -row 5 -column 0 -columnspan 3 -padx 2 -pady 2 -sticky ew", this->ThermalConductivityValueBox->GetWidgetName());
-  this->Script("grid %s -row 6 -column 0 -columnspan 3 -padx 2 -pady 2 -sticky ew", this->OpticalAbsorptionValueBox->GetWidgetName());
-  this->Script("grid %s -row 7 -column 0 -columnspan 3 -padx 2 -pady 2 -sticky ew", this->OpticalScatteringValueBox->GetWidgetName());
+  this->Script("grid %s -row 5 -column 0 -columnspan 3 -padx 2 -pady 2 -sticky ew", this->PerfusionValueBox->GetWidgetName());
+  this->Script("grid %s -row 6 -column 0 -columnspan 3 -padx 2 -pady 2 -sticky ew", this->ThermalConductivityValueBox->GetWidgetName());
+  this->Script("grid %s -row 7 -column 0 -columnspan 3 -padx 2 -pady 2 -sticky ew", this->OpticalAbsorptionValueBox->GetWidgetName());
+  this->Script("grid %s -row 8 -column 0 -columnspan 3 -padx 2 -pady 2 -sticky ew", this->OpticalScatteringValueBox->GetWidgetName());
+  this->Script("grid %s -row 9 -column 0 -columnspan 3 -padx 2 -pady 2 -sticky ew", this->Density->GetWidgetName());
 }
 
 
@@ -727,6 +758,17 @@ void vtkLITTPlanTargetingStep::ProcessGUIEvents(vtkObject *caller,
     {
       mrmlNode->SetCurrentNeedleIndex(this->NeedleTypeMenuList->GetWidget()->GetMenu()->GetIndexOfSelectedItem());
     }
+
+  if (this->TissueTypeMenuList && this->TissueTypeMenuList->GetWidget()->GetMenu() == vtkKWMenu::SafeDownCast(caller) && (event == vtkKWMenu::MenuItemInvokedEvent))
+      {
+	  if (this->TissueTypeMenuList->GetWidget()->GetMenu()->GetIndexOfSelectedItem()==0)
+		  this->PerfusionValueBox->GetWidget()->SetValue(8.0);
+	  else if (this->TissueTypeMenuList->GetWidget()->GetMenu()->GetIndexOfSelectedItem()==1)
+		  this->PerfusionValueBox->GetWidget()->SetValue(9.0);
+	  else if (this->TissueTypeMenuList->GetWidget()->GetMenu()->GetIndexOfSelectedItem()==2)
+	  	  this->PerfusionValueBox->GetWidget()->SetValue(10.0);
+	  //mrmlNode->SetCurrentTissueIndex(this->TissueTypeMenuList->GetWidget()->GetMenu()->GetIndexOfSelectedItem());
+      }
 
   if (this->VolumeSelectorWidget == vtkSlicerNodeSelectorWidget::SafeDownCast(caller) &&
     event == vtkSlicerNodeSelectorWidget::NodeSelectedEvent ) 
@@ -1203,6 +1245,10 @@ void vtkLITTPlanTargetingStep::AddGUIObservers()
     {
     this->NeedleTypeMenuList->GetWidget()->GetMenu()->AddObserver(vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand);
     }
+  if (this->TissueTypeMenuList)
+    {
+    this->TissueTypeMenuList->GetWidget()->GetMenu()->AddObserver(vtkKWMenu::MenuItemInvokedEvent, (vtkCommand *)this->GUICallbackCommand);
+    }
   if (this->DeleteButton)
     {
     this->DeleteButton->AddObserver(vtkKWPushButton::InvokedEvent, (vtkCommand *)this->GUICallbackCommand);
@@ -1248,6 +1294,10 @@ void vtkLITTPlanTargetingStep::RemoveGUIObservers()
     {
       this->NeedleTypeMenuList->GetWidget()->GetMenu()->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
     }
+  if (this->TissueTypeMenuList)
+      {
+        this->TissueTypeMenuList->GetWidget()->GetMenu()->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
+      }
   if (this->DeleteButton)
     {
     this->DeleteButton->RemoveObserver((vtkCommand *)this->GUICallbackCommand);
@@ -1383,6 +1433,28 @@ void vtkLITTPlanTargetingStep::UpdateGUI()
     int needleIndex=mrmlNode->GetCurrentNeedleIndex();
     this->NeedleTypeMenuList->GetWidget()->GetMenu()->SelectItem(needleIndex);
     }
+  if (this->TissueTypeMenuList!=NULL && this->TissueTypeMenuList->GetWidget()!=NULL)
+      {
+      this->TissueTypeMenuList->GetWidget()->GetMenu()->DeleteAllItems();
+      this->TissueTypeMenuList->GetWidget()->GetMenu()->AddRadioButton("Gray matter");
+      this->TissueTypeMenuList->GetWidget()->GetMenu()->AddRadioButton("White matter");
+      this->TissueTypeMenuList->GetWidget()->GetMenu()->AddRadioButton("Tumor");
+      //for (int i = 0; i < 3; i++)
+        //{
+        //NeedleDescriptorStruct needleDesc;
+        //mrmlNode->GetNeedle(i, needleDesc);
+        //std::ostrstream needleTitle;
+        //needleTitle << needleDesc.mDescription << " <" << needleDesc.mTargetNamePrefix <<"> ("
+         // <<needleDesc.GetOvershoot()<<"mm overshoot, "
+         // <<needleDesc.mLength<<"mm length"
+         // << ")" << std::ends;
+       // this->TissueTypeMenuList->GetWidget()->GetMenu()->AddRadioButton("abc");
+        //needleTitle.rdbuf()->freeze();
+        //needleTitle.clear();
+       // }
+      //int needleIndex=mrmlNode->GetCurrentNeedleIndex();
+      //this->TissueTypeMenuList->GetWidget()->GetMenu()->SelectItem(needleIndex);
+      }
 
   if (this->ShowRobotButton &&this->ShowRobotButton->IsCreated()) 
   {

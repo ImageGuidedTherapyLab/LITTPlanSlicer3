@@ -78,11 +78,11 @@ endif(NOT Volumes_BINARY_DIR)
 # --------------------------------------------------------------------------
 # Find Slicer3
 
-find_package(Subversion)
-if (Subversion_FOUND)
-  Subversion_WC_INFO(${CMAKE_HOME_DIRECTORY} LITTPlan)
-  set(LITTPlan_REVISION "${LITTPlan_WC_REVISION}")
-endif (Subversion_FOUND)
+#find_package(Subversion)
+#if (Subversion_FOUND)
+ # Subversion_WC_INFO(${CMAKE_HOME_DIRECTORY} LITTPlan)
+ # set(LITTPlan_REVISION "${LITTPlan_WC_REVISION}")
+#endif (Subversion_FOUND)
 
 # --------------------------------------------------------------------------
 # Include dirs
