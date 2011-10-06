@@ -1,0 +1,28 @@
+##cubit -nographics -batch -input laserEllipse.jou
+reset
+#create applicator dimensions in mm
+create cylinder radius 0.75   height 100
+create cylinder radius 0.60   height 100
+move volume 2 location x 0 y 0 z 5
+webcut volume 1 tool volume 2 
+delete volume 2 to 3
+move volume 1 location x 0 y 0 z 40
+
+#create damage template dimensions in mm
+create sphere radius 1.0  
+#from	Roger McNichols rmcnichols@visualaseinc.com 
+#with the larger fiber (say, in liver or prostate) we can create up to 3.5 x 3 cm lesions.
+#That should be enough. With the smaller fiber probably 2.5 x 2 cm is close to max size,
+#but with reeeaaaallly long exposures, it might grow larger
+#25mm x20mm
+# scale transverse radius to  10.0mm = 2.0cm diameter 
+volume 4 scale 10.0 10.0 25.0
+
+##create stand
+#brick x 180 y 100 z 120
+#move volume 4 location x  0 y -120 z 0
+#unite volume 1 with volume 4
+## write stl file (in mm)
+#volume all scale 10
+export stl "laserApplicator.stl" volume 1 overwrite
+export stl "damageTemplate.stl" volume 4 overwrite
