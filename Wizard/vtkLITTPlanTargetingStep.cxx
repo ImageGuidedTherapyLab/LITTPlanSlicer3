@@ -325,7 +325,7 @@ void vtkLITTPlanTargetingStep::ShowTargetPlanningFrame()
     this->PerfusionValueBox->GetWidget()->SetWidth(11);
     this->PerfusionValueBox->GetWidget()->SetRange(0,100);
     this->PerfusionValueBox->GetWidget()->SetIncrement(0.5);
-    this->PerfusionValueBox->GetWidget()->SetValue(6.0);
+    this->PerfusionValueBox->GetWidget()->SetValue(9.2);
     this->PerfusionValueBox->SetLabelText("Perfusion Value [kg/(s.m3)]");
     }
 
@@ -761,12 +761,30 @@ void vtkLITTPlanTargetingStep::ProcessGUIEvents(vtkObject *caller,
 
   if (this->TissueTypeMenuList && this->TissueTypeMenuList->GetWidget()->GetMenu() == vtkKWMenu::SafeDownCast(caller) && (event == vtkKWMenu::MenuItemInvokedEvent))
       {
-	  if (this->TissueTypeMenuList->GetWidget()->GetMenu()->GetIndexOfSelectedItem()==0)
-		  this->PerfusionValueBox->GetWidget()->SetValue(8.0);
-	  else if (this->TissueTypeMenuList->GetWidget()->GetMenu()->GetIndexOfSelectedItem()==1)
-		  this->PerfusionValueBox->GetWidget()->SetValue(9.0);
-	  else if (this->TissueTypeMenuList->GetWidget()->GetMenu()->GetIndexOfSelectedItem()==2)
-	  	  this->PerfusionValueBox->GetWidget()->SetValue(10.0);
+	  if (this->TissueTypeMenuList->GetWidget()->GetMenu()->GetIndexOfSelectedItem()==0) // Grey
+	  {
+		  this->PerfusionValueBox->GetWidget()->SetValue(9.2);
+		  this->ThermalConductivityValueBox->GetWidget()->SetValue(0.502);
+		  this->OpticalAbsorptionValueBox->GetWidget()->SetValue(500);
+		  this->OpticalScatteringValueBox->GetWidget()->SetValue(134e+2);
+		  this->Density->GetWidget()->SetValue(1000);
+	  }
+	  else if (this->TissueTypeMenuList->GetWidget()->GetMenu()->GetIndexOfSelectedItem()==1) // white
+	  {
+	      this->PerfusionValueBox->GetWidget()->SetValue(2.7);
+	  	  this->ThermalConductivityValueBox->GetWidget()->SetValue(0.500);
+	  	  this->OpticalAbsorptionValueBox->GetWidget()->SetValue(320);
+	  	  this->OpticalScatteringValueBox->GetWidget()->SetValue(469e+2);
+	  	  this->Density->GetWidget()->SetValue(1000);
+	  }
+	  else if (this->TissueTypeMenuList->GetWidget()->GetMenu()->GetIndexOfSelectedItem()==2) // tumor
+	  {
+		  this->PerfusionValueBox->GetWidget()->SetValue(4.2);
+		  this->ThermalConductivityValueBox->GetWidget()->SetValue(0.545);
+		  this->OpticalAbsorptionValueBox->GetWidget()->SetValue(400);
+		  this->OpticalScatteringValueBox->GetWidget()->SetValue(2500);
+		  this->Density->GetWidget()->SetValue(1000);
+	  }
 	  //mrmlNode->SetCurrentTissueIndex(this->TissueTypeMenuList->GetWidget()->GetMenu()->GetIndexOfSelectedItem());
       }
 
