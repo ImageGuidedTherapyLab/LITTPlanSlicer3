@@ -149,11 +149,11 @@
         <Domain name="range" id="3827.NumberOfTableValues.range"/>
       </Property>
       <Property name="RGBPoints" id="3827.RGBPoints" number_of_elements="8">
-        <Element index="0" value="0"/>
+        <Element index="0" value="37.002"/>
         <Element index="1" value="0.23"/>
         <Element index="2" value="0.299"/>
         <Element index="3" value="0.754"/>
-        <Element index="4" value="4804"/>
+        <Element index="4" value="62.7026"/>
         <Element index="5" value="0.706"/>
         <Element index="6" value="0.016"/>
         <Element index="7" value="0.15"/>
@@ -222,9 +222,9 @@
     </Proxy>
     <Proxy group="extended_sources" type="Transform3" id="4506" servers="1">
       <Property name="Position" id="4506.Position" number_of_elements="3">
-        <Element index="0" value="0.0506503"/>
-        <Element index="1" value="0.0506317"/>
-        <Element index="2" value="0.0581366"/>
+        <Element index="0" value="0.0261123"/>
+        <Element index="1" value="0.0164562"/>
+        <Element index="2" value="0.00761077"/>
         <Domain name="range" id="4506.Position.range"/>
       </Property>
       <Property name="PositionInfo" id="4506.PositionInfo" number_of_elements="3">
@@ -246,7 +246,7 @@
       <Property name="Scale" id="4506.Scale" number_of_elements="3">
         <Element index="0" value="0"/>
         <Element index="1" value="1"/>
-        <Element index="2" value="1"/>
+        <Element index="2" value="0"/>
         <Domain name="range" id="4506.Scale.range"/>
       </Property>
       <Property name="ScaleInfo" id="4506.ScaleInfo" number_of_elements="3">
@@ -3634,7 +3634,7 @@
       <Property name="Point2" id="4314.Point2" number_of_elements="3">
         <Element index="0" value="0"/>
         <Element index="1" value="0.01"/>
-        <Element index="2" value="0.01"/>
+        <Element index="2" value="0"/>
         <Domain name="range" id="4314.Point2.range"/>
       </Property>
       <Property name="Resolution" id="4314.Resolution" number_of_elements="1">
@@ -3685,7 +3685,7 @@
         <Element index="0" value=""/>
       </Property>
       <Property name="Script" id="4203.Script" number_of_elements="1">
-        <Element index="0" value="laserSource = inputs[1].VTKObject&#xa;laserCoord= laserSource.GetPoints()&#xa;#print laserCoord.GetNumberOfPoints()&#xa;#print laserCoord.GetPoint(0)&#xa;#print laserCoord.GetPoint(1)&#xa;&#xa;laserFile = open(&#x27;laser.txt&#x27;,&#x27;w&#x27;)&#xa;laserFile.write(&#x27;%f %f %f\n&#x27; % laserCoord.GetPoint(0))&#xa;laserFile.write(&#x27;%f %f %f\n&#x27; % laserCoord.GetPoint(1))&#xa;&#xa;fem = output.VTKObject&#xa;#print fem.IsA(&#x22;vtkMultiBlockDataSet&#x22;)&#xa;itFem = fem.NewIterator()&#xa;itFem.UnRegister(None)&#xa;itFem.InitTraversal()&#xa;curInput = itFem.GetCurrentDataObject()&#xa;curNumberPoints = curInput.GetNumberOfPoints()&#xa;#print curNumberPoints&#xa;&#xa;DeepCopy = 1&#xa;temp = paraview.numpy_support.numpy_to_vtk(range(curNumberPoints),DeepCopy)&#xa;temp.SetName(&#x22;u0&#x22;)&#xa;&#xa;fem_point_data= curInput.GetPointData()&#xa;fem_point_data.AddArray(temp)&#xa;"/>
+        <Element index="0" value="laserSource = inputs[1].VTKObject&#xa;laserCoord= laserSource.GetPoints()&#xa;#print laserCoord.GetNumberOfPoints()&#xa;#print laserCoord.GetPoint(0)&#xa;#print laserCoord.GetPoint(1)&#xa;&#xa;import pickle&#xa;pickleFile = open(&#x27;laser.pkl&#x27;,&#x27;wb&#x27;)&#xa;laserParams = {&#x27;position1&#x27;:laserCoord.GetPoint(0),&#x27;position2&#x27;:laserCoord.GetPoint(1)}&#xa;pickle.dump(laserParams,pickleFile)&#xa;pickleFile.close()&#xa;&#xa;&#xa;fem = output.VTKObject&#xa;#print fem.IsA(&#x22;vtkMultiBlockDataSet&#x22;)&#xa;itFem = fem.NewIterator()&#xa;itFem.UnRegister(None)&#xa;itFem.InitTraversal()&#xa;curInput = itFem.GetCurrentDataObject()&#xa;curNumberPoints = curInput.GetNumberOfPoints()&#xa;#print curNumberPoints&#xa;&#xa;DeepCopy = 1&#xa;import os,time&#xa;#wait for fem to write file&#xa;while( os.path.getmtime(&#x22;laser.pkl&#x22;) &#x3e; os.path.getmtime(&#x22;temperature.txt&#x22;) ):&#xa;   #print &#x22;waiting for fem write&#x22;&#xa;   time.sleep(1)&#xa;temparray = numpy.loadtxt(&#x22;temperature.txt&#x22;)&#xa;temp = paraview.numpy_support.numpy_to_vtk(temparray,DeepCopy)&#xa;temp.SetName(&#x22;u0&#x22;)&#xa;&#xa;fem_point_data= curInput.GetPointData()&#xa;fem_point_data.AddArray(temp)&#xa;"/>
       </Property>
       <Property name="UpdateExtentScript" id="4203.UpdateExtentScript" number_of_elements="1">
         <Element index="0" value=""/>
@@ -4188,22 +4188,22 @@
         <Domain name="range" id="266.ViewTime.range"/>
       </Property>
       <Property name="CameraClippingRange" id="266.CameraClippingRange" number_of_elements="2">
-        <Element index="0" value="0.000547904"/>
-        <Element index="1" value="0.547904"/>
+        <Element index="0" value="0.000356148"/>
+        <Element index="1" value="0.356148"/>
       </Property>
       <Property name="CameraClippingRangeInfo" id="266.CameraClippingRangeInfo" number_of_elements="2">
-        <Element index="0" value="0.000547904"/>
-        <Element index="1" value="0.547904"/>
+        <Element index="0" value="0.000356148"/>
+        <Element index="1" value="0.356148"/>
       </Property>
       <Property name="CameraFocalPoint" id="266.CameraFocalPoint" number_of_elements="3">
-        <Element index="0" value="0.0460465"/>
-        <Element index="1" value="0.197484"/>
-        <Element index="2" value="0.143008"/>
+        <Element index="0" value="0.0193454"/>
+        <Element index="1" value="0.0539279"/>
+        <Element index="2" value="-0.00198991"/>
       </Property>
       <Property name="CameraFocalPointInfo" id="266.CameraFocalPointInfo" number_of_elements="3">
-        <Element index="0" value="0.0460465"/>
-        <Element index="1" value="0.197484"/>
-        <Element index="2" value="0.143008"/>
+        <Element index="0" value="0.0193454"/>
+        <Element index="1" value="0.0539279"/>
+        <Element index="2" value="-0.00198991"/>
       </Property>
       <Property name="CameraParallelProjection" id="266.CameraParallelProjection" number_of_elements="1">
         <Element index="0" value="0"/>
@@ -4216,27 +4216,27 @@
         <Element index="0" value="0.021587"/>
       </Property>
       <Property name="CameraPosition" id="266.CameraPosition" number_of_elements="3">
-        <Element index="0" value="0.0441992"/>
-        <Element index="1" value="0.258808"/>
-        <Element index="2" value="0.174429"/>
+        <Element index="0" value="0.0252112"/>
+        <Element index="1" value="0.128924"/>
+        <Element index="2" value="-0.0380131"/>
       </Property>
       <Property name="CameraPositionInfo" id="266.CameraPositionInfo" number_of_elements="3">
-        <Element index="0" value="0.0441992"/>
-        <Element index="1" value="0.258808"/>
-        <Element index="2" value="0.174429"/>
+        <Element index="0" value="0.0252112"/>
+        <Element index="1" value="0.128924"/>
+        <Element index="2" value="-0.0380131"/>
       </Property>
       <Property name="CameraViewAngle" id="266.CameraViewAngle" number_of_elements="1">
         <Element index="0" value="30"/>
       </Property>
       <Property name="CameraViewUp" id="266.CameraViewUp" number_of_elements="3">
-        <Element index="0" value="0.988073"/>
-        <Element index="1" value="0.0927447"/>
-        <Element index="2" value="-0.12292"/>
+        <Element index="0" value="0.997517"/>
+        <Element index="1" value="-0.0650416"/>
+        <Element index="2" value="0.0270187"/>
       </Property>
       <Property name="CameraViewUpInfo" id="266.CameraViewUpInfo" number_of_elements="3">
-        <Element index="0" value="0.988073"/>
-        <Element index="1" value="0.0927447"/>
-        <Element index="2" value="-0.12292"/>
+        <Element index="0" value="0.997517"/>
+        <Element index="1" value="-0.0650416"/>
+        <Element index="2" value="0.0270187"/>
       </Property>
       <Property name="EyeAngle" id="266.EyeAngle" number_of_elements="1">
         <Element index="0" value="2"/>
